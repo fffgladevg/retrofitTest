@@ -12,6 +12,7 @@ import com.example.retrofitlesson.adapter.ProductAdapter
 import com.example.retrofitlesson.databinding.ActivityMainBinding
 import com.example.retrofitlesson.retrofit.AuthRequest
 import com.example.retrofitlesson.retrofit.MainApi
+import com.example.retrofitlesson.retrofit.User
 import com.squareup.picasso.Picasso
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -31,7 +32,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
-
+        supportActionBar?.title = "Гость"
         adapter = ProductAdapter()
         binding.rcView.layoutManager = LinearLayoutManager(this)
         binding.rcView.adapter = adapter
@@ -50,6 +51,22 @@ class MainActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create()).build()
         val mainApi = retrofit.create(MainApi::class.java)
 
+        var user: User? = null
+
+        CoroutineScope(Dispatchers.IO).launch {
+            user = mainApi.auth(
+                AuthRequest(
+                    "kminchelle",
+                    "0lelplR"
+                )
+            )
+            runOnUiThread {
+                supportActionBar?.title = user?.firstName
+            }
+        }
+
+
+
         binding.sv.setOnQueryTextListener(object : OnQueryTextListener{
             override fun onQueryTextSubmit(query: String?): Boolean {
                 return true
@@ -57,7 +74,7 @@ class MainActivity : AppCompatActivity() {
 
             override fun onQueryTextChange(newText: String?): Boolean {
                 CoroutineScope(Dispatchers.IO).launch {
-                    val list = newText?.let { mainApi.getProductsByName(it) }
+                    val list = newText?.let { mainApi.getProductsByNameAuth(user?.token ?: "",it) }
                     //запуск на основном потоке
                     runOnUiThread{
                         binding.apply {
