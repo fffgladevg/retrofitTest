@@ -39,6 +39,7 @@ class MainActivity : AppCompatActivity() {
 
 
 
+        //инициализация retrofit, можно выделить в отдельный блок класс
         val interceptor = HttpLoggingInterceptor()
         interceptor.level = HttpLoggingInterceptor.Level.BODY
 
@@ -52,19 +53,6 @@ class MainActivity : AppCompatActivity() {
         val mainApi = retrofit.create(MainApi::class.java)
 
         var user: User? = null
-
-        CoroutineScope(Dispatchers.IO).launch {
-            user = mainApi.auth(
-                AuthRequest(
-                    "kminchelle",
-                    "0lelplR"
-                )
-            )
-            runOnUiThread {
-                supportActionBar?.title = user?.firstName
-            }
-        }
-
 
 
         binding.sv.setOnQueryTextListener(object : OnQueryTextListener{

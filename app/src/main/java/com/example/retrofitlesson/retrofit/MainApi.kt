@@ -2,6 +2,7 @@ package com.example.retrofitlesson.retrofit
 
 import androidx.core.location.LocationRequestCompat.Quality
 import com.example.retrofitlesson.adapter.ProductAdapter
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.Header
@@ -15,10 +16,11 @@ interface MainApi {
     suspend fun getProductById(@Path("id") id: Int): Product
 
     @POST("auth/login")
-    suspend fun auth(@Body authRequest: AuthRequest): User
+    suspend fun auth(@Body authRequest: AuthRequest): Response<User>
 
+    @Headers("Content-Type: application/json")
     @GET("auth/products")
-    suspend fun getAllProducts(): Products
+    suspend fun getAllProducts(@Header("Authorization") token: String): Products
 
     @Headers("Content-Type: application/json")
     @GET("auth/products/search")
