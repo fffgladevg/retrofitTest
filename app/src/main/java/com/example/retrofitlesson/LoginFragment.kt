@@ -42,7 +42,6 @@ class LoginFragment : Fragment() {
         binding.apply {
             bNext.setOnClickListener {
                 findNavController().navigate(R.id.action_loginFragment_to_productsFragment)
-                viewModel.token.value = ""
             }
             bSignIn.setOnClickListener {
                 auth(
@@ -77,6 +76,7 @@ class LoginFragment : Fragment() {
             val response = mainApi.auth(authRequest)
             val message = response.errorBody()?.string()?.let {
                 JSONObject(it).getString("message") }
+
             requireActivity().runOnUiThread {
                 binding.error.text = message
                 val user = response.body()
